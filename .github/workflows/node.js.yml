@@ -27,4 +27,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Todolist
-      run: npm install && npm run test
+      run: ls && npm install && npm run test
