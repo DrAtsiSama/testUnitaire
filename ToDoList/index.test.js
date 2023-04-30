@@ -1,12 +1,53 @@
 const User = require('./utilisateur');
 const ToDoList = require('./todolist');
 const EmailSenderService = require('./emailSenderService');
-
+// test générique
 const userTest = new User("Fabrice", "Fabien", "fabrice.fabien@hotmail.fr", "2002-02-20", "password1Maj");
-const todoTest = new ToDoList("Only ToDoTest", "Je suis du contenu !", Date.now());
+const todoTest = new ToDoList("Only ToDoTest", "Je suis du contenu !", new Date());
 
+describe('Mock TodoList', () => {
+    let todolistMock;
+    let pushMock;
+    const emailSenderService = new EmailSenderService();
+    let email = "toto@tata.titi";
+    let message = "Todolist is full!";
+    /**
+     * Initialisation du mock et todo avant les tests
+     * création todo vide + mock pushmock
+     */
+    beforeEach(() => {
+        todolistMock = [];
+        // modification de la méthode push pour appeler la méthode d'origine
+        todolistMock.internalList = [];
+        pushMock = jest.fn((element) => {
+            Array.prototype.push.call(todolistMock, element);
+            todolistMock.internalList.push(element);
+            if(todolistMock.internalList.length === 8){
+                emailSenderService.sendEmail(email,message);
+            }
+        });
+        todolistMock.push = pushMock;
+    });
+    //
+    test("8 ème élément ", () => {
+        for(let i = 1; i <= 7; i++){
+            todolistMock.push(`Tache ${i}`);
+        }
+        todolistMock.push('Tache 8');
+        expect(pushMock).toHaveBeenCalledTimes(8);
+        expect(emailSenderService.sendEmail).toHaveBeenCalledWith("toto@tata.titi",'Todolist is full!');
+    });
+})
+
+//catégorie de test
 describe('Test Utilisateur Valide :', () => {
+    // définition du test effectué
     test('Nom et prénom renseignés', () => {
+        /**
+         * expect : résultat voulu
+         * .toBeTruthy() : Le résultat retourné doit être vrai
+         * le test a pour but de vérifié si le nom de l'utilisateur générique possède bien un Nom.  
+         */
         expect(userTest.isNameValid()).toBeTruthy();
         expect(userTest.isPrenomValid()).toBeTruthy();
     });
@@ -30,7 +71,7 @@ describe('Test Utilisateur Valide :', () => {
 
 describe('Test Utilisateur ToDoList:', () => {
     test('Création d\'une nouvelle ToDoList pour l\'utilisateur', () => {
-        let createTodo = userTest.createTodoList("Test TodoList", "Je suis le contenu creation Todo", Date.now());
+        let createTodo = userTest.createTodoList("Test TodoList", "Je suis le contenu creation Todo", new Date());
 
         expect(userTest.listToDo).toContain(createTodo)
     });
@@ -43,7 +84,7 @@ describe('Test Utilisateur ToDoList:', () => {
     });
 
     test('Ajout d\'une nouvelle ToDoList à l\'utilisateur', () => {
-        const toDoList1 = userTest.createTodoList("Only ToDoTest", "Je suis un second content du contenu !", Date.now());
+        const toDoList1 = userTest.createTodoList("Only ToDoTest", "Je suis un second content du contenu !", new Date());
 
         userTest.addTodoList(toDoList1);
         expect(userTest.listToDo).toContain(toDoList1)
@@ -64,11 +105,11 @@ describe('Test Utilisateur ToDoList:', () => {
 
 describe('Test ToDoList :', () => {
     test('Ajout d\'une nouvelle Tache ', () => {
-        let newTask = todoTest.addTask("Ajouter une tache", "contenu de la tache", Date.now());
+        let newTask = todoTest.addTaskSansTime("Ajouter une tache", "contenu de la tache", new Date());
 
         expect(todoTest.tasks).toContain(newTask);
     });
-
+    //Erreur lors de l'ajout de la tache
     test('Recupération des Taches', () => {
         let list = todoTest.getTasks();
 
@@ -85,11 +126,18 @@ describe('Test ToDoList :', () => {
         todoTest.removeTask(1);
         expect(todoTest.tasks.length).toBe(0);
     });
+    test('Ajout d\'une nouvelle Tache moins de 30 minutes après', () => {
+        let newTask = todoTest.addTask("Ajouter une tache", "contenu de la tache", new Date());
+
+        expect(todoTest.tasks.length === 0).toBe(true);
+    });
+
 });
 
 jest.mock('./emailSenderService.js');
 
 describe('Test Mock emailSenderService :', () => {
+    // Test d'un mock (retournera un test valide : appel d'une méthode et vérification de l'appel de celle ci dans le même test)
     it('Simulation envoie du mail ', () => {
         // Creation de la promesse pour EmailSenderService
         const emailSenderService = new EmailSenderService();
@@ -134,12 +182,12 @@ test('envoie email au 8 eme item élément de la toDoList', () => {
     sendEmailMock.mockReturnValue(true);
 
     // creation de la toDoList
-    let createTodo = userTest.createTodoList("Test TodoList", "Je suis le contenu creation Todo", Date.now());
+    let createTodo = userTest.createTodoList("Test TodoList", "Je suis le contenu creation Todo", new Date());
 
     for (let i = 0; i < 10; i++){
         // Ajout des tasks dans la toDoList
-        createTodo.addTask("Ajouter une tache", "contenu de la tache", Date.now());
-
+        createTodo.addTaskSansTime("Ajouter une tache", "contenu de la tache", new Date());
+        console.log(createTodo.tasks.length);
         if (createTodo.tasks.length === 8) {
             result = emailSenderService.sendEmail(email,message);
         }
