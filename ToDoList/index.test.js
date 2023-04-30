@@ -187,6 +187,7 @@ test('envoie email au 8 eme item élément de la toDoList', () => {
     for (let i = 0; i < 10; i++){
         // Ajout des tasks dans la toDoList
         createTodo.addTaskSansTime("Ajouter une tache", "contenu de la tache", new Date());
+        console.log(createTodo.tasks.length);
         if (createTodo.tasks.length === 8) {
             result = emailSenderService.sendEmail(email,message);
         }
