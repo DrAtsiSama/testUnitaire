@@ -26,6 +26,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Racine
+      run: npm install
     - name: Todolist
       run: |
         cd ToDoList
