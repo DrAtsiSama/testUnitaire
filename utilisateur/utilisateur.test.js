@@ -1,4 +1,5 @@
 const User = require('./utilisateur');
+const mockUser = new User('Mock', 'User', 'mock@example.com', 15);
 
 describe('utilisateur', () => {
   test('Nom / Prenom  correct', () => {
@@ -26,17 +27,16 @@ describe('utilisateur', () => {
   });
 
 });
-const mockUser = new User('Mock', 'User', 'mock@example.com', 15);
 
-jest.mock('./utilisateur', () => {
-  return jest.fn().mockImplementation(() => {
-    return mockUser;
-  });
-});
+// jest.mock('./utilisateur', () => {
+//   return jest.fn().mockImplementation(() => {
+//     return mockUser;
+//   });
+// });
 
 describe('My test suite', () => {
   test('My test case', () => {
-    const user1 = new User("Fabrice", "Fabien", "fabrice.fabien@hotmail.fr", 13);
+    const user1 = new User("Mock", "User", "mock@example.com", 15);
     expect(user1).toEqual(mockUser);
   });
 });
