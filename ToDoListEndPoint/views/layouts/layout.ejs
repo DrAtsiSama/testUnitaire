@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test EJS Partials</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<%- include('../partials/header') %>
+<div>
+    <div id="content">
+        <%- body %>
+    </div>
+</div>
+<%- include('../partials/footer') %>
+</body>
+</html>

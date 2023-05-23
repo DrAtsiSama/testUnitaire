@@ -1,8 +1,40 @@
+html, body {
+    margin: 0;
+    height: 100%;
+}
 body{
-    background: black;
-    color: limegreen;
+    display: flex;
+    flex-direction: column;
     text-align: center;
 }
-* {
-    color: limegreen;
+header, footer {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: gray;
+    color: white;
+}
+footer {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+    justify-content: center;
+}
+#content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    text-align: left;
+}
+.headband {
+    background-color: darkgray;
+}
+#content .scrollable {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
 }
